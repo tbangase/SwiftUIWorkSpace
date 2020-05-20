@@ -13,9 +13,12 @@ struct ContentView: View {
     @State private var centerCoordinate = CLLocationCoordinate2D()
     @State private var locations = [MKPointAnnotation]()
     
+    @State private var selectedPlace: MKPointAnnotation?
+    @State private var showingPlaceDetail = false
+    
     var body: some View {
         ZStack {
-            MapView(centerCoordinate: $centerCoordinate, annotations: locations)
+            MapView(centerCoordinate: $centerCoordinate, selectedPlace: $selectedPlace, showingPlaceDetail: $showingPlaceDetail, annotations: locations)
                 .edgesIgnoringSafeArea(.all)
             Circle()
                 .fill(Color.blue)
@@ -43,6 +46,11 @@ struct ContentView: View {
                     .padding(.trailing)
                 }
             }
+        }
+        .alert(isPresented: $showingPlaceDetail) {
+            Alert(title: Text(selectedPlace?.title ?? "Unknown"), message: Text(selectedPlace?.subtitle ?? "Missing place information"), primaryButton: .default(Text("OK")), secondaryButton: .default(Text("Edit")) {
+                    //edit this place
+                })
         }
     }
 }
