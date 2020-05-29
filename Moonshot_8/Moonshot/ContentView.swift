@@ -39,7 +39,7 @@ struct ContentView: View {
                 }
             }
             .navigationBarTitle("Moonshot")
-            .navigationBarItems(trailing: Button("Launch/Member") {
+            .navigationBarItems(trailing: Button("Date/Member") {
                 self.showMember.toggle()
             })
         }
