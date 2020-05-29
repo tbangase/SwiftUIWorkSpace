@@ -17,6 +17,8 @@
 		8F8902552480D05D004D0BB8 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F8902542480D05D004D0BB8 /* User.swift */; };
 		8FB8FAAF2480D39300CBB35A /* LineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB8FAAE2480D39300CBB35A /* LineChartView.swift */; };
 		8FB8FAB12480D41B00CBB35A /* LineCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB8FAB02480D41B00CBB35A /* LineCardView.swift */; };
+		8FB8FAB3248142FF00CBB35A /* AddActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB8FAB2248142FF00CBB35A /* AddActivityView.swift */; };
+		8FB8FAB52481430D00CBB35A /* AddDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB8FAB42481430D00CBB35A /* AddDataView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +34,8 @@
 		8F8902542480D05D004D0BB8 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8FB8FAAE2480D39300CBB35A /* LineChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChartView.swift; sourceTree = "<group>"; };
 		8FB8FAB02480D41B00CBB35A /* LineCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineCardView.swift; sourceTree = "<group>"; };
+		8FB8FAB2248142FF00CBB35A /* AddActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddActivityView.swift; sourceTree = "<group>"; };
+		8FB8FAB42481430D00CBB35A /* AddDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDataView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,9 +70,11 @@
 			children = (
 				8F89023C2480C934004D0BB8 /* AppDelegate.swift */,
 				8F89023E2480C935004D0BB8 /* SceneDelegate.swift */,
-				8F8902402480C935004D0BB8 /* ContentView.swift */,
-				8F8902502480CF2D004D0BB8 /* DetailView.swift */,
 				8F8902542480D05D004D0BB8 /* User.swift */,
+				8F8902402480C935004D0BB8 /* ContentView.swift */,
+				8FB8FAB2248142FF00CBB35A /* AddActivityView.swift */,
+				8F8902502480CF2D004D0BB8 /* DetailView.swift */,
+				8FB8FAB42481430D00CBB35A /* AddDataView.swift */,
 				8FB8FAAE2480D39300CBB35A /* LineChartView.swift */,
 				8FB8FAB02480D41B00CBB35A /* LineCardView.swift */,
 				8F8902422480C93C004D0BB8 /* Assets.xcassets */,
@@ -159,10 +165,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F89023D2480C935004D0BB8 /* AppDelegate.swift in Sources */,
+				8FB8FAB3248142FF00CBB35A /* AddActivityView.swift in Sources */,
 				8FB8FAB12480D41B00CBB35A /* LineCardView.swift in Sources */,
 				8F8902512480CF2D004D0BB8 /* DetailView.swift in Sources */,
 				8F89023F2480C935004D0BB8 /* SceneDelegate.swift in Sources */,
 				8F8902552480D05D004D0BB8 /* User.swift in Sources */,
+				8FB8FAB52481430D00CBB35A /* AddDataView.swift in Sources */,
 				8F8902412480C935004D0BB8 /* ContentView.swift in Sources */,
 				8FB8FAAF2480D39300CBB35A /* LineChartView.swift in Sources */,
 			);

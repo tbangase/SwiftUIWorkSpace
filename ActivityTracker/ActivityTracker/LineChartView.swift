@@ -122,14 +122,18 @@ struct LineChartView: View {
     var body: some View {
         GeometryReader { geo in
             VStack {
-                LinePath(dataSet: self.dataSet)
-                    .trim(from: 0, to: self.showLine ? 1 : 0)
-                    .stroke(Color.green , lineWidth: 5)
-                    .onAppear(perform: {
-                        withAnimation(.easeInOut(duration: 2)) {
-                            self.showLine = true
-                        }
-                    })
+                if self.dataSet.isEmpty {
+                    Text("No data").font(.title)
+                } else {
+                    LinePath(dataSet: self.dataSet)
+                        .trim(from: 0, to: self.showLine ? 1 : 0)
+                        .stroke(Color.green , lineWidth: 5)
+                        .onAppear(perform: {
+                            withAnimation(.easeInOut(duration: 2)) {
+                                self.showLine = true
+                            }
+                        })
+                }
                 
                 /*Button("Animate") {
                     withAnimation(.easeInOut(duration: 2)) {
@@ -138,12 +142,12 @@ struct LineChartView: View {
                 }*/
             }
             .contentShape(Rectangle())
-            .onTapGesture {
+            /*.onTapGesture {
                 self.showLine = false
                 withAnimation(.easeInOut(duration: 2)) {
                     self.showLine = true
                 }
-            }
+            }*/
         }
         
         

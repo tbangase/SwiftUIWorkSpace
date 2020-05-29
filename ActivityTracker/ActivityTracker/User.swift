@@ -10,22 +10,35 @@ import Foundation
 
 class UserInformation: ObservableObject {
     class LogData: ObservableObject {
-        var data = [[Double]]()
+        class Data: ObservableObject {
+            var datum: [Double]
+            var date: Date
+            
+            init() {
+                self.datum = [Double]()
+                self.date = Date()
+            }
+        }
+        var logName: String
+        var category: String
+        var data: [Data]
+        
+        init() {
+            self.logName = "Annonymous"
+            self.category = "Others"
+            self.data = [Data]()
+        }
     }
-    
     var name: String
-    
-    var level: Double
-    var exp: Double
-    
-    var logData: [String : LogData]
+    var logData: [LogData]
+    var categories: [String]
     
     
     init() {
-        self.name = "Example"
-        self.level = 0
-        self.exp = 0
-        
-        self.logData = [String : LogData]()
+        self.name = "Guest"
+        self.logData = [LogData]()
+        self.categories = [String]()
+        //self.level = 0
+        //self.exp = 0
     }
 }
