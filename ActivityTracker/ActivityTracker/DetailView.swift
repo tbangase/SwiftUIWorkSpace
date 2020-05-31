@@ -17,9 +17,89 @@ struct DetailView: View {
     //var dataset: [[Double]]
     
     var body: some View {
-        ZStack {
-            LineChartView(dataSet: dataSet())
-                .frame(width: 300, height: 200)
+        let logdata = user.info.logData[dataNumber]
+        
+        return ZStack {
+            ScrollView(.vertical) {
+                LineChartView(dataSet: dataSet())
+                    .frame(width: 300, height: 200)
+                
+                VStack(alignment: .leading){
+                    HStack {
+                        Text("Max \(logdata.dataName) ")
+                        
+                        Spacer()
+                        
+                        if logdata.maxData == 0 {
+                            Text("No Data")
+                                .foregroundColor(.red)
+                                .font(.body)
+                                .padding(.trailing, 30)
+                        } else {
+                            Text("\(logdata.maxData, specifier: "%.2f")")
+                                .foregroundColor(.white)
+                                .padding(.trailing, 30)
+                        }
+                        
+                    }
+                    .padding()
+                    
+                    HStack {
+                        Text("Min \(logdata.dataName) ")
+                        
+                        Spacer()
+                        
+                        if logdata.minData == 0 {
+                            Text("No Data")
+                                .foregroundColor(.red)
+                                .font(.body)
+                                .padding(.trailing, 30)
+                        } else {
+                            Text("\(logdata.minData)")
+                                .foregroundColor(.white)
+                                .padding(.trailing, 30)
+                        }
+                    }
+                    .padding()
+                    
+                    HStack {
+                        Text("Mean of \(logdata.dataName) ")
+                        
+                        Spacer()
+                        
+                        if logdata.meanData == 0 {
+                            Text("No Data")
+                                .foregroundColor(.red)
+                                .font(.body)
+                                .padding(.trailing, 30)
+                        } else {
+                            Text("\(logdata.meanData)")
+                                .foregroundColor(.white)
+                                .padding(.trailing, 30)
+                        }
+                    }
+                    .padding()
+                    
+                    
+                }.font(.title)
+                .background(Color.green)
+                .foregroundColor(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 30))
+                    .shadow(radius: 10, x: 5,y: 5)
+                .padding(8)
+                
+                
+                ForEach(0..<logdata.data.count) { num in
+                    Divider()
+                    
+                    Text(self.displayShortDate(date: logdata.data[logdata.data.count - 1 - num].date))
+                    + Text("   ")
+                    + Text("\(logdata.dataName): ")
+                    + Text("\(logdata.data[logdata.data.count - 1 - num].datum[1], specifier: "%.2f")")
+                        .font(.headline)
+                }
+                Divider()
+            }
             
             VStack {
                 Spacer()
@@ -38,19 +118,20 @@ struct DetailView: View {
                     .foregroundColor(.white)
                     .clipShape(Capsule())
                     .buttonStyle(PlainButtonStyle())
+                    .shadow(radius: 5, y: 5)
                     .padding()
                 }
             }
         }
         .sheet(isPresented: $showingAddData) {
-            AddDataView()
+            AddDataView(user: self.user, dataNumber: self.dataNumber)
         }
-        .navigationBarTitle(user.logData[dataNumber].logName)
+        .navigationBarTitle(user.info.logData[dataNumber].logName)
     }
     
     func dataSet() -> [[Double]] {
         var dataset = [[Double]]()
-        let logData = user.logData[dataNumber]
+        let logData = user.info.logData[dataNumber]
         
         for data in logData.data {
             dataset.append(data.datum)
@@ -58,6 +139,13 @@ struct DetailView: View {
         
         return dataset
         //return [[0.0,0.0], [1.0, 2.0]]
+    }
+    
+    func displayShortDate(date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
     
     /*
@@ -77,35 +165,36 @@ struct DetailView: View {
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
         let user = UserInformation()
-        user.logData.append(UserInformation.LogData())
-        user.logData[0].logName = "Log Name"
+        user.info.logData.append(UserData.LogData())
+        user.info.logData[0].logName = "Log Name"
         
         
         var date = Date()
-        user.logData[0].data.append(UserInformation.LogData.Data())
-        user.logData[0].data[0].date = date
-        user.logData[0].data[0].datum = [0.0, 0.0]
-        
-        
-        date = date.addingTimeInterval(86400)
-        user.logData[0].data.append(UserInformation.LogData.Data())
-        user.logData[0].data[1].date = date
-        user.logData[0].data[1].datum = [1.0, 2.0]
+        user.info.logData[0].data.append(UserData.LogData.Data())
+        user.info.logData[0].data[0].date = date
+        user.info.logData[0].data[0].datum = [0.0, 0.0]
         
         date = date.addingTimeInterval(86400)
-        user.logData[0].data.append(UserInformation.LogData.Data())
-        user.logData[0].data[2].date = date
-        user.logData[0].data[2].datum = [2.0, 5.0]
+        user.info.logData[0].data.append(UserData.LogData.Data())
+        user.info.logData[0].data[1].date = date
+        user.info.logData[0].data[1].datum = [1.0, 2.0]
         
         date = date.addingTimeInterval(86400)
-        user.logData[0].data.append(UserInformation.LogData.Data())
-        user.logData[0].data[3].date = date
-        user.logData[0].data[3].datum = [3.0, -2.0]
+        user.info.logData[0].data.append(UserData.LogData.Data())
+        user.info.logData[0].data[2].date = date
+        user.info.logData[0].data[2].datum = [2.0, 5.0]
         
         date = date.addingTimeInterval(86400)
-        user.logData[0].data.append(UserInformation.LogData.Data())
-        user.logData[0].data[4].date = date
-        user.logData[0].data[4].datum = [4.0, 1.0]
+        user.info.logData[0].data.append(UserData.LogData.Data())
+        user.info.logData[0].data[3].date = date
+        user.info.logData[0].data[3].datum = [3.0, -2.0]
+        
+        date = date.addingTimeInterval(86400)
+        user.info.logData[0].data.append(UserData.LogData.Data())
+        user.info.logData[0].data[4].date = date
+        user.info.logData[0].data[4].datum = [4.0, 1.0]
+        
+        user.info.logData[0].maxData = 12
         
         return DetailView(user: user, dataNumber: 0)
     }
