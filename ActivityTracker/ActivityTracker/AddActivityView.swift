@@ -157,7 +157,14 @@ struct AddActivityView: View {
         appendData.logName = activityName
         appendData.category = user.info.categories[category]
         appendData.dataName = dataName
+        
+        print(appendData)
+        
         user.info.logData.append(appendData)
+        
+        print(user.info.logData)
+        
+        user.objectWillChange.send()
     }
 }
 

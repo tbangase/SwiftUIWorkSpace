@@ -32,10 +32,10 @@ class UserInformation: ObservableObject {
     }
 }
 
-class UserData: Codable {
-    class LogData: Codable {
-        class Data: Codable {
-            
+class UserData: Codable, Identifiable {
+    class LogData: Codable, Identifiable {
+        class Data: Codable, Identifiable {
+            var id = UUID()
             var datum: [Double]
             var date: Date
             
@@ -44,6 +44,8 @@ class UserData: Codable {
                 self.date = Date()
             }
         }
+        var id = UUID()
+        
         var logName: String
         var category: String
         var data: [Data]
@@ -60,6 +62,7 @@ class UserData: Codable {
             self.dataName = "Data"
         }
     }
+    var id = UUID()
     var name: String
     var logData: [LogData]
     var categories: [String]

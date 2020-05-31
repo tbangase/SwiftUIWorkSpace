@@ -13,14 +13,17 @@ struct ContentView: View {
     
     @State private var showingAddActivity = false
     
+    var matchedCategories = [String]()
+    var matchedIds = [Int]()
+    
     var body: some View {
         NavigationView {
             ZStack {
                 ScrollView(.vertical) {
-                    ForEach(0..<user.info.categories.count) { num in
+                    ForEach(user.info.categories/*0..<user.info.categories.count*/) { cnum in
                         VStack(alignment: .leading) {
                             HStack {
-                                Text(self.user.info.categories[num])
+                                Text(self.user.info.categories[cnum])
                                     .font(.largeTitle)
                                     .fontWeight(.bold)
                                     .padding(.horizontal)
@@ -30,7 +33,7 @@ struct ContentView: View {
                             }
                             
                             
-                            if self.categoryMatched(category: self.user.info.categories[num]).isEmpty{
+                            if self.categoryMatched(category: self.user.info.categories[cnum]).isEmpty{
                                 Text("No Activity yet.")
                                     .font(.largeTitle)
                                     .foregroundColor(.secondary)
@@ -38,11 +41,12 @@ struct ContentView: View {
                             } else {
                                 ScrollView(.horizontal) {
                                     HStack {
-                                        ForEach(0 ..< self.user.info.logData.count) { num in
+                                        ForEach(0 ..< self.categoryMatched(category: self.user.info.categories[cnum]).count) { num in
                                             NavigationLink(destination:
-                                                DetailView(user: self.user, dataNumber: num)
+                                                DetailView(user: self.user,
+                                                           dataNumber: self.matchedId(category: self.user.info.categories[cnum])[num])
                                             ) {
-                                                LineCardView(dataName: self.user.info.logData[num].logName, dataset: self.dataSet(dataNumber: num))
+                                                LineCardView(dataName: self.categoryMatched(category: self.user.info.categories[cnum])[num].logName, dataset: self.dataSet(dataNumber: self.matchedId(category: self.user.info.categories[cnum])[num]))
                                                     .environment(\.colorScheme, .light)
                                                     .frame(width: 150, height: 180)
                                                     .padding(5)
@@ -109,6 +113,20 @@ struct ContentView: View {
         }
         
         return matched
+    }
+    
+    func matchedId(category: String) -> [Int] {
+        var ids = [Int]()
+        
+        if user.info.logData.isEmpty { return ids }
+        
+        for num in 0..<user.info.logData.count {
+            if user.info.logData[num].category == category {
+                ids.append(num)
+            }
+        }
+        
+        return ids
     }
     
     init() {
