@@ -20,7 +20,7 @@ struct LineCardView: View {
         GeometryReader { geo in
             HStack {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 20)
+                    Rectangle()
                         .frame(width: geo.size.width - self.offset,
                                height: geo.size.height - self.offset)
                         .foregroundColor(self.colorScheme == .dark ? .black : .white)

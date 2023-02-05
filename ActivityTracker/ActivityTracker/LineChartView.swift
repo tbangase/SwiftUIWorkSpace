@@ -79,7 +79,10 @@ struct LinePath: Shape {
             if max < dataSet[i][1] {
                 max = dataSet[i][1]
             }
-            
+        }
+        
+        min = max
+        for i in 0..<dataSet.count {
             if min > dataSet[i][1] {
                 min = dataSet[i][1]
             }
@@ -89,7 +92,16 @@ struct LinePath: Shape {
     }
     
     func heightOffset(dataSet: [[Double]]) -> Double {
+        var max = 0.0
         var min = 0.0
+        
+        for i in 0..<dataSet.count {
+            if max < dataSet[i][1] {
+                max = dataSet[i][1]
+            }
+        }
+        
+        min = max
         
         for i in 0..<dataSet.count {
             if min > dataSet[i][1] {
@@ -123,7 +135,10 @@ struct LineChartView: View {
         GeometryReader { geo in
             VStack {
                 if self.dataSet.isEmpty {
-                    Text("No data").font(.title)
+                    Text("No data")
+                        .font(.title)
+                        .foregroundColor(.secondary)
+                        .frame(width: geo.size.width, alignment: .center)
                 } else {
                     LinePath(dataSet: self.dataSet)
                         .trim(from: 0, to: self.showLine ? 1 : 0)
@@ -160,7 +175,7 @@ struct LineChartView_Previews: PreviewProvider {
         var sampleData = [[Double]]()
         
         for i in 0..<30 {
-            sampleData.append([Double(i), Double.random(in: 0...10)])
+            sampleData.append([Double(i), Double.random(in: 0...100)])
         }
         
         return LineChartView(dataSet: sampleData)

@@ -12,6 +12,7 @@ struct ContentView: View {
     @ObservedObject var user = UserInformation()
     
     @State private var showingAddActivity = false
+    @State var needReflesh = false
     
     var matchedCategories = [String]()
     var matchedIds = [Int]()
@@ -19,37 +20,52 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             ZStack {
+                /*VStack {
+                    HStack{
+                        Spacer()
+                        
+                        Button("Debug") {
+                            self.debug()
+                        }.padding()
+                    }
+                    Spacer()
+                }*/
+                
                 ScrollView(.vertical) {
-                    ForEach(user.info.categories/*0..<user.info.categories.count*/) { cnum in
+                    ForEach(user.info.categories, id: \.self) { category in
                         VStack(alignment: .leading) {
-                            HStack {
-                                Text(self.user.info.categories[cnum])
-                                    .font(.largeTitle)
-                                    .fontWeight(.bold)
-                                    .padding(.horizontal)
-                                    .offset(x: 0, y: 20)
+                            if !self.categoryMatched(category: category).isEmpty {
+                                HStack {
+                                    Text(category)
+                                        .font(.largeTitle)
+                                        .fontWeight(.bold)
+                                        .padding(.horizontal)
+                                        .offset(x: 0, y: 20)
+                                    
+                                    Spacer()
+                                }
                                 
-                                Spacer()
-                            }
-                            
-                            
-                            if self.categoryMatched(category: self.user.info.categories[cnum]).isEmpty{
-                                Text("No Activity yet.")
-                                    .font(.largeTitle)
-                                    .foregroundColor(.secondary)
-                                    .padding()
-                            } else {
-                                ScrollView(.horizontal) {
-                                    HStack {
-                                        ForEach(0 ..< self.categoryMatched(category: self.user.info.categories[cnum]).count) { num in
-                                            NavigationLink(destination:
-                                                DetailView(user: self.user,
-                                                           dataNumber: self.matchedId(category: self.user.info.categories[cnum])[num])
-                                            ) {
-                                                LineCardView(dataName: self.categoryMatched(category: self.user.info.categories[cnum])[num].logName, dataset: self.dataSet(dataNumber: self.matchedId(category: self.user.info.categories[cnum])[num]))
-                                                    .environment(\.colorScheme, .light)
-                                                    .frame(width: 150, height: 180)
-                                                    .padding(5)
+                                
+                                if self.categoryMatched(category: category).isEmpty{
+                                    Text("No Activity yet.")
+                                        .font(.largeTitle)
+                                        .foregroundColor(.secondary)
+                                        .padding()
+                                } else {
+                                    ScrollView(.horizontal) {
+                                        HStack {
+                                            ForEach(0 ..< self.categoryMatched(category: category).count, id: \.self) { num in
+                                                NavigationLink(destination:
+                                                    DetailView(user: self.user,
+                                                               dataNumber: self.matchedId(category: category)[num], needReflesh: Binding<Bool>(get: {self.needReflesh}, set: { newValue in
+                                                                self.needReflesh = newValue
+                                                               }))
+                                                ) {
+                                                    LineCardView(dataName: self.categoryMatched(category: category)[num].logName, dataset: self.dataSet(dataNumber: self.matchedId(category: category)[num]))
+                                                        .environment(\.colorScheme, .light)
+                                                        .frame(width: 150, height: 180)
+                                                        .padding(5)
+                                                }
                                             }
                                         }
                                     }
@@ -76,7 +92,7 @@ struct ContentView: View {
                         }
                         .frame(width: 70, height: 70)
                         .background(Color.blue)
-                        .clipShape(Circle())
+                        .clipShape(Rectangle())
                         .buttonStyle(PlainButtonStyle())
                         .shadow(radius: 5,x: 5,y: 5)
                         .padding()
@@ -129,101 +145,11 @@ struct ContentView: View {
         return ids
     }
     
-    init() {
-        user.info.logData.append(UserData.LogData())
-        user.info.logData[0].logName = "Example 1"
-        
-        var exampleData = user.info.logData[0]
-        exampleData.category = "Health"
-        
-        var date = Date()
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[0].datum = [0.0, 0.0]
-        exampleData.data[0].date = date
-        
-        
-        date = date.addingTimeInterval(86400)
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[1].date = date
-        exampleData.data[1].datum = [1.0, 2.0]
-        
-        date = date.addingTimeInterval(86400)
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[2].date = date
-        exampleData.data[2].datum = [2.0, 5.0]
-        
-        date = date.addingTimeInterval(86400)
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[3].date = date
-        exampleData.data[3].datum = [3.0, -2.0]
-        
-        date = date.addingTimeInterval(86400)
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[4].date = date
-        exampleData.data[4].datum = [4.0, 1.0]
-        
-        user.info.logData.append(UserData.LogData())
-        user.info.logData[1].logName = "Example 2"
-        
-        exampleData = user.info.logData[1]
-        exampleData.category = "Ambition"
-        date = Date()
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[0].datum = [0.0, 0.0]
-        exampleData.data[0].date = date
-        
-        date = date.addingTimeInterval(86400)
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[1].date = date
-        exampleData.data[1].datum = [1.0, 5.0]
-        
-        date = date.addingTimeInterval(86400)
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[2].date = date
-        exampleData.data[2].datum = [2.0, 3.0]
-        
-        date = date.addingTimeInterval(86400)
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[3].date = date
-        exampleData.data[3].datum = [3.0, 1.0]
-        
-        date = date.addingTimeInterval(86400)
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[4].date = date
-        exampleData.data[4].datum = [4.0, 4.0]
-        
-        user.info.logData.append(UserData.LogData())
-        user.info.logData[2].logName = "Example 3"
-        
-        exampleData = user.info.logData[2]
-        exampleData.category = "Relation"
-        
-        date = Date()
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[0].datum = [0.0, 0.0]
-        exampleData.data[0].date = date
-        
-        date = date.addingTimeInterval(86400)
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[1].date = date
-        exampleData.data[1].datum = [1.0, 5.0]
-        
-        date = date.addingTimeInterval(86400)
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[2].date = date
-        exampleData.data[2].datum = [2.0, 3.0]
-        
-        date = date.addingTimeInterval(86400)
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[3].date = date
-        exampleData.data[3].datum = [3.0, 1.0]
-        
-        date = date.addingTimeInterval(86400)
-        exampleData.data.append(UserData.LogData.Data())
-        exampleData.data[4].date = date
-        exampleData.data[4].datum = [4.0, 4.0]
-        
+    func debug() {
+        print(user.info.logData)
     }
+    
+    
 }
 
 struct ContentView_Previews: PreviewProvider {

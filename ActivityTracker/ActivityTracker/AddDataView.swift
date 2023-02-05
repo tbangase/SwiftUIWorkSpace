@@ -16,6 +16,11 @@ struct AddDataView: View {
     @State private var subscribeDate = Date()
     
     let dataNumber: Int
+    @Binding var needReflesh: Bool
+    
+    var buttonDisabled: Bool {
+        Double(data) == nil
+    }
     
     var body: some View {
         GeometryReader { geo in
@@ -53,9 +58,21 @@ struct AddDataView: View {
                 }
                 
                 Group {
-                    Text("How much \(self.user.info.logData[self.dataNumber].dataName)?")
-                        .font(.title)
-                        .frame(width: geo.size.width - 20, alignment: .leading)
+                    HStack {
+                        Text("How much \(self.user.info.logData[self.dataNumber].dataName)?")
+                            .font(.title)
+                            .frame(alignment: .leading)
+                            .padding(.leading, 10)
+                        
+                        Spacer()
+                        
+                        if self.buttonDisabled {
+                            Text("Please enter Number.")
+                                .foregroundColor(Color.red)
+                                .padding(.trailing, 10)
+                                .offset(y: 5)
+                        }
+                    }
                     
                     TextField("Example: 23.34", text: self.$data)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -63,19 +80,79 @@ struct AddDataView: View {
                         .padding(.bottom, 50)
                 }
                 
-                Button(action: {
-                    self.presentationMode.wrappedValue.dismiss()
-                }) {
-                    Text("Add")
-                        .font(.title)
-                        .padding()
-                        .frame(width: geo.size.width - 20)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                }
+                Section {
+                    Button(action: {
+                        self.addData()
+                        self.saveToUserdefaults(items: self.user.info)
+                        self.presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Text("Add")
+                            .font(.title)
+                            .padding()
+                            .frame(width: geo.size.width - 20)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .clipShape(Rectangle())
+                    }
+                }.disabled(self.buttonDisabled)
+                
                 Spacer()
             }
+        }
+    }
+    
+    func addData() {
+        let newData = UserData.LogData.Data()
+        //let numOfData = Double(user.info.logData[dataNumber].data.count)
+        let logdata = user.info.logData[dataNumber]
+        
+        var interval = TimeInterval()
+        
+        if logdata.data.count == 0 {
+            interval = 0.0
+        } else {
+            interval = subscribeDate.timeIntervalSince(logdata.data[0].date)
+        }
+        let xval = Double(interval) / 86400
+        
+        newData.date = subscribeDate
+        newData.datum = [xval, Double(data) ?? 0.0]
+        
+        logdata.data.append(newData)
+        
+        //calculate statistic values
+        var max = 0.0
+        for i in 0..<logdata.data.count {
+            if max < logdata.data[i].datum[1] {
+                max = logdata.data[i].datum[1]
+            }
+        }
+        logdata.maxData = max
+        
+        var min = max
+        for i in 0..<logdata.data.count {
+            if min > logdata.data[i].datum[1] {
+                min = logdata.data[i].datum[1]
+            }
+        }
+        logdata.minData = min
+        
+        var sum = 0.0
+        for i in 0..<logdata.data.count {
+            sum += logdata.data[i].datum[1]
+        }
+        logdata.meanData = sum/Double(logdata.data.count)
+        
+        logdata.data.sort()
+        
+        needReflesh.toggle()
+    }
+    
+    func saveToUserdefaults(items: UserData) {
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(items) {
+            UserDefaults.standard.set(encoded, forKey: "User")
+            print(encoded)
         }
     }
 }
@@ -115,6 +192,6 @@ struct AddDataView_Previews: PreviewProvider {
         
         user.info.logData[0].maxData = 12
         
-        return AddDataView(user: user, dataNumber: 0)
+        return AddDataView(user: user, dataNumber: 0, needReflesh: .constant(false))
     }
 }

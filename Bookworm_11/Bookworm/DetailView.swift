@@ -44,7 +44,7 @@ struct DetailView: View {
                 
                 Spacer(minLength: 25)
                 
-                Text("Write at: "+self.dateString(date: self.book.date ?? Date()))
+                Text("Wrote at: "+self.dateString(date: self.book.date ?? Date()))
                     .frame(maxWidth: .infinity,  alignment: .trailing)
                     .padding()
             }

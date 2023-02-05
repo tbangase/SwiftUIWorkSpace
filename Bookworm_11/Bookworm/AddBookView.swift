@@ -17,6 +17,7 @@ struct AddBookView: View {
     @State private var rating = 0
     @State private var genre = "Default"
     @State private var review = ""
+    @State private var date = Date()
     
     let genres = ["Default","Fantasy", "Horror", "Kids", "Mystery", "Poetry", "Romance", "Thriller"]
     
@@ -40,6 +41,12 @@ struct AddBookView: View {
                 }
                 
                 Section {
+                    DatePicker(selection: $date) {
+                        Text("Finished to read")
+                    }
+                }
+                
+                Section {
                     Button("Save") {
                         let newBook = Book(context: self.moc)
                         newBook.title = self.title
@@ -47,8 +54,7 @@ struct AddBookView: View {
                         newBook.rating = Int16(self.rating)
                         newBook.genre = self.genre
                         newBook.review = self.review
-                        
-                        newBook.date = Date()
+                        newBook.date = self.date
                         
                         try? self.moc.save()
                         

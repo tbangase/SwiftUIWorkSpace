@@ -15,7 +15,7 @@ struct ContentView: View {
         NavigationView {
             Form {
                 Section {
-                    Picker(selection: $order.data.type, label: Text("Selec your cake type")) {
+                    Picker(selection: $order.data.type, label: Text("Select your cake type")) {
                         ForEach(0..<OrderData.types.count) {
                             Text(OrderData.types[$0])
                         }

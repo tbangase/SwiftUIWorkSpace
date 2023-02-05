@@ -9,11 +9,16 @@
 import SwiftUI
 
 struct DetailView: View {
+    @Environment(\.presentationMode) var mode
     @ObservedObject var user: UserInformation
     
     @State private var showingAddData = false
     
+    @GestureState private var dragOffset = CGSize.zero
+    
     let dataNumber: Int
+    @Binding var needReflesh: Bool
+    @State var hiddenTrigger = false
     //var dataset: [[Double]]
     
     var body: some View {
@@ -55,7 +60,7 @@ struct DetailView: View {
                                 .font(.body)
                                 .padding(.trailing, 30)
                         } else {
-                            Text("\(logdata.minData)")
+                            Text("\(logdata.minData, specifier: "%.2f")")
                                 .foregroundColor(.white)
                                 .padding(.trailing, 30)
                         }
@@ -73,7 +78,7 @@ struct DetailView: View {
                                 .font(.body)
                                 .padding(.trailing, 30)
                         } else {
-                            Text("\(logdata.meanData)")
+                            Text("\(logdata.meanData, specifier: "%.2f")")
                                 .foregroundColor(.white)
                                 .padding(.trailing, 30)
                         }
@@ -84,19 +89,21 @@ struct DetailView: View {
                 }.font(.title)
                 .background(Color.green)
                 .foregroundColor(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 30))
+                .clipShape(Rectangle())
                     .shadow(radius: 10, x: 5,y: 5)
                 .padding(8)
                 
                 
-                ForEach(0..<logdata.data.count) { num in
-                    Divider()
-                    
-                    Text(self.displayShortDate(date: logdata.data[logdata.data.count - 1 - num].date))
-                    + Text("   ")
-                    + Text("\(logdata.dataName): ")
-                    + Text("\(logdata.data[logdata.data.count - 1 - num].datum[1], specifier: "%.2f")")
-                        .font(.headline)
+                ForEach(0..<logdata.data.count, id: \.self) { num in
+                    VStack {
+                        Divider()
+                        
+                        Text(self.displayShortDate(date: logdata.data[logdata.data.count - 1 - num].date))
+                        + Text("   ")
+                        + Text("\(logdata.dataName): ")
+                        + Text("\(logdata.data[logdata.data.count - 1 - num].datum[1], specifier: "%.2f")")
+                            .font(.headline)
+                    }
                 }
                 Divider()
             }
@@ -110,13 +117,15 @@ struct DetailView: View {
                     Button(action: {
                         self.showingAddData = true
                     }) {
-                        Text("Add Data")
-                            .font(.title)
+                        Image(systemName: "plus")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                        
                     }
                     .padding()
                     .background(Color.blue)
                     .foregroundColor(.white)
-                    .clipShape(Capsule())
+                    .clipShape(Rectangle())
                     .buttonStyle(PlainButtonStyle())
                     .shadow(radius: 5, y: 5)
                     .padding()
@@ -124,9 +133,25 @@ struct DetailView: View {
             }
         }
         .sheet(isPresented: $showingAddData) {
-            AddDataView(user: self.user, dataNumber: self.dataNumber)
+            AddDataView(user: self.user, dataNumber: self.dataNumber, needReflesh: self.$needReflesh)
         }
         .navigationBarTitle(user.info.logData[dataNumber].logName)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: Button(action: {
+            self.needReflesh.toggle()
+            self.hiddenTrigger.toggle()
+            self.mode.wrappedValue.dismiss()
+        }) {
+            HStack {
+                Image(systemName: "arrow.left")
+                Text("Activity")
+            }
+        })
+        .gesture(DragGesture().updating($dragOffset, body: { (value, state, transaction) in
+            if(value.startLocation.x < 20 && value.translation.width > 100) {
+                self.mode.wrappedValue.dismiss()
+            }
+        }))
     }
     
     func dataSet() -> [[Double]] {
@@ -196,6 +221,6 @@ struct DetailView_Previews: PreviewProvider {
         
         user.info.logData[0].maxData = 12
         
-        return DetailView(user: user, dataNumber: 0)
+        return DetailView(user: user, dataNumber: 0, needReflesh: .constant(false))
     }
 }

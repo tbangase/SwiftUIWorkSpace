@@ -11,22 +11,22 @@ import Foundation
 class UserInformation: ObservableObject {
     @Published var info: UserData {
         didSet {
-            /*let encoder = JSONEncoder()
+            let encoder = JSONEncoder()
             if let encoded = try? encoder.encode(info) {
                 UserDefaults.standard.set(encoded, forKey: "User")
                 print(encoded)
-            }*/
+            }
         }
     }
     
     init() {
-       /* if let info = UserDefaults.standard.data(forKey: "User") {
+       if let info = UserDefaults.standard.data(forKey: "User") {
             let decoder = JSONDecoder()
             if let decoded = try? decoder.decode(UserData.self, from: info) {
                 self.info = decoded
                 return
             }
-        }*/
+        }
         
         self.info = UserData()
     }
@@ -34,10 +34,18 @@ class UserInformation: ObservableObject {
 
 class UserData: Codable, Identifiable {
     class LogData: Codable, Identifiable {
-        class Data: Codable, Identifiable {
+        class Data: Codable, Identifiable, Comparable {
             var id = UUID()
             var datum: [Double]
             var date: Date
+            
+            static func < (lhs: UserData.LogData.Data, rhs: UserData.LogData.Data) -> Bool {
+                lhs.date < rhs.date
+            }
+            
+            static func == (lhs: UserData.LogData.Data, rhs: UserData.LogData.Data) -> Bool {
+                lhs.date == rhs.date
+            }
             
             init() {
                 self.datum = [Double]()

@@ -40,7 +40,7 @@ struct AddActivityView: View {
                             .padding(.top, 30)
                     }
                     
-                    Divider()
+                    Divider().padding(.bottom, 20)
                     
                     Group {
                         Text("Activity Name")
@@ -50,7 +50,7 @@ struct AddActivityView: View {
                         TextField("Example: Training", text: self.$activityName)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .padding(.horizontal, 5)
-                            .padding(.bottom, 10)
+                            .padding(.bottom, 50)
                     }
                     
                     Group {
@@ -67,6 +67,7 @@ struct AddActivityView: View {
                                         .foregroundColor(.white)
                                         .clipShape(Capsule())
                                         .padding(.horizontal, 10)
+                                        
                                     
                                 }.buttonStyle(PlainButtonStyle())
                             }
@@ -115,13 +116,20 @@ struct AddActivityView: View {
                     }
                     
                     Text("Choose one data to save log.")
+                        .frame(width: geo.size.width - 20, alignment: .leading)
                         .font(.headline)
-                        .padding(.vertical, 30)
+                        .padding(.top, 50)
+                    
+                    Text("If you really want to track your activity, the best way is just tracking one data. So, please choose JUST ONE of the data you want tracking.")
+                        .frame(width: geo.size.width - 20, alignment: .leading)
+                        .padding(.vertical, 20)
+                    
                     
                     Group {
                         Text("Data Name")
                             .font(.title)
                             .frame(width: geo.size.width - 20, alignment: .leading)
+                            .padding(.top)
                         
                         TextField("Example: Trained time (Minute)", text: self.$dataName)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -131,6 +139,7 @@ struct AddActivityView: View {
                     
                     Button(action: {
                         self.createActivity()
+                        self.saveToUserdefaults(items: self.user.info)
                         self.presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("Save")
@@ -139,7 +148,7 @@ struct AddActivityView: View {
                             .frame(width: geo.size.width - 20)
                             .background(Color.blue)
                             .foregroundColor(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                            .clipShape(Rectangle())
                     }
                     Spacer()
                 }
@@ -158,13 +167,17 @@ struct AddActivityView: View {
         appendData.category = user.info.categories[category]
         appendData.dataName = dataName
         
-        print(appendData)
-        
         user.info.logData.append(appendData)
         
-        print(user.info.logData)
-        
         user.objectWillChange.send()
+    }
+    
+    func saveToUserdefaults(items: UserData) {
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(items) {
+            UserDefaults.standard.set(encoded, forKey: "User")
+            print(encoded)
+        }
     }
 }
 
